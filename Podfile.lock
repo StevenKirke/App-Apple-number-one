@@ -1,0 +1,16 @@
+PODS:
+  - YandexMapsMobile (4.5.1-lite)
+
+DEPENDENCIES:
+  - YandexMapsMobile (= 4.5.1-lite)
+
+SPEC REPOS:
+  trunk:
+    - YandexMapsMobile
+
+SPEC CHECKSUMS:
+  YandexMapsMobile: 1d4ab5b441f189756e0a9f94626ff26ae1fc9756
+
+PODFILE CHECKSUM: 329de3245d7a869fac5f4f00f17719f6dc82f612
+
+COCOAPODS: 1.15.2
