@@ -11,7 +11,10 @@
 
 ## Getting started
 #### Для дальнейшей работы, необходимо скачать архив или клонировать проект с ресурса GitHub.
-#### Разархивировать и приступить к работе.
+#### Разархивировать.
+#### Открыть папку с проектом в терминале и установить Pod - MapKit. (pod install)
+#### (pod 'YandexMapsMobile', '4.5.1-lite') добавлен в файл Podfile
+#### После установки Pod, запустить файл Apple №1.xcworkspace
 
 ## Usage
 ####
@@ -24,171 +27,173 @@
 ### (Отображение структуры в GitHub не соответствует структуре в проекте, ниже приведена файловая структура проекта)
 
 ``` bash
-└── Apple №1
-    ├── README.md
-    └── Apple №1
-        ├── Emuns
-        │   ├── RegexPatterns.swift
-        │   ├── iPhoneSeries.swift
-        │   └── DeviceLines.swift
-        ├── Entity
-        │   └── TreeNodeCatalog
-        │       ├── TreeNode.swift
-        │       ├── TreeCategory.swift
-        │       └── TreeOffer.swift
-        ├── Mocks
-        │   ├── catalogList.xml
-        │   ├── ModelAdressWorkshops.swift
-        │   └── ModelsAndRepair.json
-        ├── Services
-        │   ├── ConvertService.swift
-        │   ├── CodeGenerateService.swift
-        │   ├── PhoneMaskService.swift
-        │   └── AssemblerURLService.swift
-        ├── Managers
-        │   ├── CNContactManager.swift
-        │   ├── TimerManager.swift
-        │   ├── DecodeJsonManager.swift
-        │   ├── NetworkManager.swift
-        │   ├── LoadFileManager.swift
-        │   └── LocationManager.swift
-        ├── Converters
-        │   ├── ConvertorDevicesDTO.swift
-        │   ├── ConvertToSeriesAndModelDTO.swift
-        │   └── ConvertorRepairModelDTO.swift
-        ├── Styles
-        │   └── GlobalStyleSettings.swift
-        ├── Extensions
-        │   ├── ExtensionUIViewController.swift
-        │   ├── ExtensionUIApplication.swift
-        │   └── ExtensionUIColor.swift
-        ├── Assets
-        │   └── Colors
-        │       ├── CustomColors.swift
-        │       └── StyleColors.swift
-        ├── CustomUI
-        │   └── FabricUI.swift
-        ├── Coordinators
-        │   │── Common
-        │   │   └── ICoordinator.swift
-        │   ├── AppCoordinator.swift
-        │   ├── LoginCoordinator.swift
-        │   ├── MainCoordinator.swift
-        │   ├── RepairCoordinator.swift
-        │   ├── StatusCoordinator.swift
-        │   ├── ProfileCoordinator.swift
-        │   ├── ContactCoordinator.swift
-        │   └── StockCoordinator.swift
-        ├── Flows
-        │   ├── IConfigurator.swift
-        │   ├── LoginFlow
-        │   │   └── LoginScene
-        │   │       ├── LoginAssembler.swift
-        │   │       ├── LoginViewController.swift
-        │   │       ├── LoginIterator.swift
-        │   │       ├── LoginPresenter.swift
-        │   │       ├── LoginViewModel.swift
-        │   │       └── LoginWorker.swift
-        │   ├── MainFlow
-        │   │   ├── TabBarController.swift
-        │   │   └── TabBarPage.swift
-        │   ├── RepairFlow
-        │   │   ├── MainRepairScene
-        │   │   │   ├── AssemblerMainRepair.swift
-        │   │   │   ├── MainRepairViewController.swift
-        │   │   │   ├── MainRepairIterator.swift
-        │   │   │   ├── MainRepairPresenter.swift
-        │   │   │	├── Models
-        │   │   │   │	├── MainRepairDevicesModel.swift
-        │   │   │   │	└── MainRepairSeriesModel.swift
-        │   │   │	├── Worker
-        │   │   │   │ 	├── MainRepairWorker.swift
-        │   │   │  	│ 	└── CatalogSeriesDTO.swift
-        │   │   │	└── CollectionViews
-        │   │   │    	├── DevicesCollectionView
-        │   │   │    	│	├── DevicesCollectionView.swift
-        │   │   │    	│	├── CustomCellForDevice.swift
-        │   │   │    	│	└── IndicatorView.swift
-        │   │   │    	└── SeriesCollectionView
-        │   │   │    	 	├── SeriesCollectionView.swift
-        │   │   │    	 	├── HeaderForSeriesCollection.swift
-        │   │   │    	 	├── CellForSeriesView.swift
-        │   │   │    	 	└── EmptyCellForSeriesView.swift
-        │   │   │── ListRepairScene
-        │   │   │   ├── ListRepairAssembler.swift
-        │   │   │   ├── ListRepairViewController.swift
-        │   │   │   ├── ListRepairIterator.swift
-        │   │   │   ├── ListRepairPresenter.swift
-        │   │   │   ├── ListRepairViewModel.swift
-        │   │   │	├── AdditionalView
-        │   │   │ 	│ 	└── CustomCellForRepair.swift
-        │   │   │	└── Worker
-        │   │   │  	  	├── ListRepairWorker.swift
-        │   │   │ 	 	└── ListRepairDTO.swift
-        │   │   └── OrderScene
-        │   │       ├── OrderRepairAssembler.swift
-        │   │       ├── OrderRepairViewController.swift
-        │   │       ├── OrderRepairIterator.swift
-        │   │       ├── OrderRepairPresenter.swift
-        │   │       ├── OrderRepairModel.swift
-        │   │       ├── OrderRepairWorker.swift
-        │   │    	└── AdditionalView
-        │   │     	 	└── BonusView.swift
-        │   ├── StatusFlow
-        │   │   └── MainStatusScene
-        │   │       ├── AssemblerMainStatus.swift
-        │   │       └── MainStatusViewController.swift
-        │   ├── ProfileFlow
-        │   │   └── MainProfileScene
-        │   │       ├── AssemblerMainProfile.swift
-        │   │       └── MainProfileViewController.swift
-        │   ├── ContactFlow
-        │   │   └── MainContactScene
-        │   │       ├── AssemblerMainContact.swift
-        │   │       ├── MainContactViewController.swift
-        │   │       ├── MainContactIterator.swift
-        │   │       ├── MainContactPresenter.swift
-        │   │       ├── MainContactModel.swift
-        │   │       ├── MainContactWorker.swift
-        │   │    	└── AdditionalView
-        │   │     	 	└── CellForContact.swift
-        │   ├── StockFlow
-        │   │   └── MainStockScene
-        │   │       ├── AssemblerMainStock.swift
-        │   │       └── MainStockViewController.swift
-        │   ├── CommonScenes
-        │   │   ├── ContactListScene
-        │   │   │   ├── ContactListAssembler.swift
-        │   │   │   ├── ContactListViewController.swift
-        │   │   │   ├── ContactListIterator.swift
-        │   │   │   ├── ContactListPresenter.swift
-        │   │   │   └── ContactListModel.swift
-        │   │   └── CustomUIAlertScene
-        │   │       ├── CustomUIAlertController.swift
-        │   │       └── CustomUIAlertModel.swift
-        ├── Application
-        │   ├── AppDelegate.swift
-        │   └── SceneDelegate.swift
-        └── Resources
-            ├── Fonts
-            │   │── SFLight
-            │   │── SFBoldItalic
-            │   │── SFRegular
-            │   └── SFMedium
-            ├── swiftlint.yml
-            ├── LaunchScreen.storyboard
-            ├── Assets.xcassets
-            └── Info.plist
+├── Apple №1
+│    ├── README.md
+│   └── Apple №1
+│       ├── Emuns
+│       │   ├── RegexPatterns.swift
+│       │   ├── iPhoneSeries.swift
+│       │   └── DeviceLines.swift
+│       ├── Entity
+│       │   └── TreeNodeCatalog
+│       │       ├── TreeNode.swift
+│       │       ├── TreeCategory.swift
+│       │       └── TreeOffer.swift
+│       ├── Mocks
+│       │   ├── catalogList.xml
+│       │   ├── ModelsAndRepair.json
+│       │   └── ModelAdressWorkshops.swift
+│       ├── Services
+│       │   ├── ConvertService.swift
+│       │   ├── CodeGenerateService.swift
+│       │   ├── PhoneMaskService.swift
+│       │   └── AssemblerURLService.swift
+│       ├── Managers
+│       │   ├── CNContactManager.swift
+│       │   ├── TimerManager.swift
+│       │   ├── DecodeJsonManager.swift
+│       │   ├── NetworkManager.swift
+│       │   ├── LoadFileManager.swift
+│       │   └── LocationManager.swift
+│       ├── Converters
+│       │   ├── ConvertorDevicesDTO.swift
+│       │   ├── ConvertToSeriesAndModelDTO.swift
+│       │   └── ConvertorRepairModelDTO.swift
+│       ├── Styles
+│       │   └── GlobalStyleSettings.swift
+│       ├── Extensions
+│       │   ├── ExtensionUIViewController.swift
+│       │   ├── ExtensionUIApplication.swift
+│       │   └── ExtensionUIColor.swift
+│       ├── Assets
+│       │   └── Colors
+│       │       ├── CustomColors.swift
+│       │       └── StyleColors.swift
+│       ├── CustomUI
+│       │   └── FabricUI.swift
+│       ├── Coordinators
+│       │   │── Common
+│       │   │   └── ICoordinator.swift
+│       │   ├── AppCoordinator.swift
+│       │   ├── LoginCoordinator.swift
+│       │   ├── MainCoordinator.swift
+│       │   ├── RepairCoordinator.swift
+│       │   ├── StatusCoordinator.swift
+│       │   ├── ProfileCoordinator.swift
+│       │   ├── ContactCoordinator.swift
+│       │   └── StockCoordinator.swift
+│       ├── Flows
+│       │   ├── IConfigurator.swift
+│       │   ├── LoginFlow
+│       │   │   └── LoginScene
+│       │   │       ├── LoginAssembler.swift
+│       │   │       ├── LoginViewController.swift
+│       │   │       ├── LoginIterator.swift
+│       │   │       ├── LoginPresenter.swift
+│       │   │       ├── LoginViewModel.swift
+│       │   │       └── LoginWorker.swift
+│       │   ├── MainFlow
+│       │   │   ├── TabBarController.swift
+│       │   │   └── TabBarPage.swift
+│       │   ├── RepairFlow
+│       │   │   ├── MainRepairScene
+│       │   │   │   ├── AssemblerMainRepair.swift
+│       │   │   │   ├── MainRepairViewController.swift
+│       │   │   │   ├── MainRepairIterator.swift
+│       │   │   │   ├── MainRepairPresenter.swift
+│       │   │   │	├── Models
+│       │   │   │   │	├── MainRepairDevicesModel.swift
+│       │   │   │   │	└── MainRepairSeriesModel.swift
+│       │   │   │	├── Worker
+│       │   │   │   │ 	├── MainRepairWorker.swift
+│       │   │   │  	│ 	└── CatalogSeriesDTO.swift
+│       │   │   │	└── CollectionViews
+│       │   │   │    	├── DevicesCollectionView
+│       │   │   │    	│	├── DevicesCollectionView.swift
+│       │   │   │    	│	├── CustomCellForDevice.swift
+│       │   │   │    	│	└── IndicatorView.swift
+│       │   │   │    	└── SeriesCollectionView
+│       │   │   │    	 	├── SeriesCollectionView.swift
+│       │   │   │    	 	├── HeaderForSeriesCollection.swift
+│       │   │   │    	 	├── CellForSeriesView.swift
+│       │   │   │    	 	└── EmptyCellForSeriesView.swift
+│       │   │   │── ListRepairScene
+│       │   │   │   ├── ListRepairAssembler.swift
+│       │   │   │   ├── ListRepairViewController.swift
+│       │   │   │   ├── ListRepairIterator.swift
+│       │   │   │   ├── ListRepairPresenter.swift
+│       │   │   │   ├── ListRepairViewModel.swift
+│       │   │   │	├── AdditionalView
+│       │   │   │ 	│ 	└── CustomCellForRepair.swift
+│       │   │   │	└── Worker
+│       │   │   │  	  	├── ListRepairWorker.swift
+│       │   │   │ 	 	└── ListRepairDTO.swift
+│       │   │   └── OrderScene
+│       │   │       ├── OrderRepairAssembler.swift
+│       │   │       ├── OrderRepairViewController.swift
+│       │   │       ├── OrderRepairIterator.swift
+│       │   │       ├── OrderRepairPresenter.swift
+│       │   │       ├── OrderRepairModel.swift
+│       │   │       ├── OrderRepairWorker.swift
+│       │   │    	└── AdditionalView
+│       │   │     	 	└── BonusView.swift
+│       │   ├── StatusFlow
+│       │   │   └── MainStatusScene
+│       │   │       ├── AssemblerMainStatus.swift
+│       │   │       └── MainStatusViewController.swift
+│       │   ├── ProfileFlow
+│       │   │   └── MainProfileScene
+│       │   │       ├── AssemblerMainProfile.swift
+│       │   │       └── MainProfileViewController.swift
+│       │   ├── ContactFlow
+│       │   │   └── MainContactScene
+│       │   │       ├── AssemblerMainContact.swift
+│       │   │       ├── MainContactViewController.swift
+│       │   │       ├── MainContactIterator.swift
+│       │   │       ├── MainContactPresenter.swift
+│       │   │       ├── MainContactModel.swift
+│       │   │       ├── MainContactWorker.swift
+│       │   │    	└── AdditionalView
+│       │   │     	 	├── CellForContact.swift
+│       │   │     	 	└── MapView.swift
+│       │   ├── StockFlow
+│       │   │   └── MainStockScene
+│       │   │       ├── AssemblerMainStock.swift
+│       │   │       └── MainStockViewController.swift
+│       │   ├── CommonScenes
+│       │   │   ├── ContactListScene
+│       │   │   │   ├── ContactListAssembler.swift
+│       │   │   │   ├── ContactListViewController.swift
+│       │   │   │   ├── ContactListIterator.swift
+│       │   │   │   ├── ContactListPresenter.swift
+│       │   │   │   └── ContactListModel.swift
+│       │   │   └── CustomUIAlertScene
+│       │   │       ├── CustomUIAlertController.swift
+│       │   │       └── CustomUIAlertModel.swift
+│       ├── Application
+│       │   ├── AppDelegate.swift
+│       │   └── SceneDelegate.swift
+│       └── Resources
+│           ├── Fonts
+│           │   │── SFLight
+│           │   │── SFBoldItalic
+│           │   │── SFRegular
+│           │   └── SFMedium
+│           ├── swiftlint.yml
+│           ├── LaunchScreen.storyboard
+│           ├── Assets.xcassets
+│           └── Info.plist
+└── Pods
 ```
 
 ## Running the tests
 
 ## Dependencies
-#### Зависимостей нет.
+#### Pod - YandexMapsMobile.
 
 ## Workflow
-#### App version:
-#### iOS version:
+#### App version: 15.3 (15E5202a)
+#### iOS version: 14,2
 
 ## Design
 #### Дизайн для приложения выполнен в Figma.
