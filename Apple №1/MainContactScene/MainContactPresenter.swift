@@ -9,7 +9,8 @@ import Foundation
 
 protocol IMainContactPresenter: AnyObject {
 	func presentAddresses(presentAddress: MainContactModel.Response)
-	func presentMap(presentMap: MainContactModel.Response)
+	func presentCurrentLocation(presentCurrentLocation: MainContactModel.Response)
+	func presentDistance(presentDistance: MainContactModel.Response)
 }
 
 final class MainContactPresenter {
@@ -36,11 +37,19 @@ extension MainContactPresenter: IMainContactPresenter {
 		}
 	}
 
-	func presentMap(presentMap: MainContactModel.Response) {
-		if case .showMap(let map) = presentMap {
-			viewController?.renderMap(renderMap: map)
+	func presentCurrentLocation(presentCurrentLocation: MainContactModel.Response) {
+		if case .showCurrentCoordinate(let coordinate) = presentCurrentLocation {
+			let model = MainContactModel.ViewModel.Coordinates(
+				latitude: coordinate.latitude,
+				longitude: coordinate.longitude
+			)
+			viewController?.renderCurrentLocation(renderCurrentLocation: model)
+		}
+	}
+
+	func presentDistance(presentDistance: MainContactModel.Response) {
+		if case .showDistance(let distance) = presentDistance {
+			viewController?.renderDistance(renderDistance: distance)
 		}
 	}
 }
-
-// 

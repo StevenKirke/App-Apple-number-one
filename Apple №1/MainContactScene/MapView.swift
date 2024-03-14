@@ -26,8 +26,9 @@ final class MapView: UIView {
 	}
 
 	func reload(coordinate: MainContactModel.Request.Coordinates) {
+		print("coordinate")
 		self.addPlace(coordinate: coordinate)
-		addPlacemark(coordinate: coordinate.flag)
+		addPlaceMark(coordinate: coordinate.flag)
 	}
  }
 
@@ -45,24 +46,7 @@ private extension MapView {
 // MARK: - UI configuration.
 private extension MapView {
 	/// Настройка UI элементов
-	func setupConfiguration() {
-	}
-
-	func addPlacemark(coordinate: MainContactModel.Request.FlagCoordinates) {
-		let point = YMKPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
-		let viewPlacemark: YMKPlacemarkMapObject = mapView.mapWindow.map.mapObjects.addPlacemark(with: point)
-		viewPlacemark.setIconWith(
-			imageMark,
-			style: YMKIconStyle(
-				anchor: CGPoint(x: 0.5, y: 1) as NSValue,
-				rotationType: YMKRotationType.rotate.rawValue as NSNumber,
-				zIndex: 0,
-				flat: true,
-				visible: true,
-				scale: 0.5,
-				tappableArea: nil
-			))
-	}
+	func setupConfiguration() { }
 }
 
 // MARK: - Add constraint.
@@ -91,15 +75,35 @@ private extension MapView {
 private extension MapView {
 	func addPlace(coordinate: MainContactModel.Request.Coordinates) {
 		let point = YMKPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
-		mapView.mapWindow.map.move(
-			with: YMKCameraPosition(
-				target: point,
-				zoom: Float(coordinate.zoom),
-				azimuth: 0,
-				tilt: 0
-			),
-			animation: YMKAnimation(type: .smooth, duration: 1),
-			cameraCallback: nil
-		)
+		DispatchQueue.main.async {
+			self.mapView.mapWindow.map.move(
+				with: YMKCameraPosition(
+					target: point,
+					zoom: Float(coordinate.zoom),
+					azimuth: 0,
+					tilt: 0
+				),
+				animation: YMKAnimation(type: .smooth, duration: 1),
+				cameraCallback: nil
+			)
+		}
+	}
+
+	func addPlaceMark(coordinate: MainContactModel.Request.FlagCoordinates) {
+		Task.init {
+			let point = YMKPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
+			let viewPlacemark = self.mapView.mapWindow.map.mapObjects.addPlacemark(with: point)
+			viewPlacemark.setIconWith(
+				self.imageMark,
+				style: YMKIconStyle(
+					anchor: CGPoint(x: 0.5, y: 1) as NSValue,
+					rotationType: YMKRotationType.rotate.rawValue as NSNumber,
+					zIndex: 0,
+					flat: true,
+					visible: true,
+					scale: 0.5,
+					tappableArea: nil
+				))
+		}
 	}
 }

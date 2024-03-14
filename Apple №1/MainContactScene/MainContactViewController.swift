@@ -6,11 +6,11 @@
 //
 
 import UIKit
-import YandexMapsMobile
 
 protocol IMainContactViewLogic: AnyObject {
 	func renderAddresses(renderAddress: [MainContactModel.ViewModel.AddressWorkShop])
-	func renderMap(renderMap: Data)
+	func renderCurrentLocation(renderCurrentLocation: MainContactModel.ViewModel.Coordinates)
+	func renderDistance(renderDistance: Double)
 }
 
 final class MainContactViewController: UIViewController {
@@ -19,12 +19,14 @@ final class MainContactViewController: UIViewController {
 	var iterator: IMainContactIterator?
 
 	// MARK: - Private properties
-	private let gesture = UIPanGestureRecognizer()
 	private var mapView = MapView()
 	private lazy var labelHeader = createLabel()
+	private lazy var labelDistance = createLabel()
 	private lazy var collectionAddress = createCollectionView()
+	private lazy var buttonMyLocation = createButton(systemName: "location")
 	private lazy var buttonIncrease = createButton(systemName: "plus.magnifyingglass")
 	private lazy var buttonDecrease = createButton(systemName: "minus.magnifyingglass")
+	private var modelCurrentLocation = MainContactModel.ViewModel.Coordinates(latitude: 0.0, longitude: 0.0)
 	private var modelForDisplay: [MainContactModel.ViewModel.AddressWorkShop] = []
 	private var modelForDisplayMap: MainContactModel.Request.Coordinates = MainContactModel.Request.Coordinates(
 		latitude: 0.0,
@@ -32,7 +34,7 @@ final class MainContactViewController: UIViewController {
 		zoom: 0,
 		flag: MainContactModel.Request.FlagCoordinates(latitude: 0.0, longitude: 0.0)
 	)
-	private var currentZoom: Float = 15.0 {
+	private var currentZoom: Float = 12.0 {
 		willSet {
 			modelForDisplayMap.zoom = newValue
 		}
@@ -69,7 +71,9 @@ private extension MainContactViewController {
 	func addUIView() {
 		let views: [UIView] = [
 			collectionAddress,
+			labelDistance,
 			mapView,
+			buttonMyLocation,
 			buttonIncrease,
 			buttonDecrease
 		]
@@ -92,24 +96,20 @@ private extension MainContactViewController {
 		collectionAddress.delegate = self
 		collectionAddress.dataSource = self
 
+		labelDistance.text = "Расстояние до текущего центра - 45656 км"
+		labelDistance.numberOfLines = 2
+		labelDistance.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+		labelDistance.layer.borderWidth = 1
+
 		mapView.layer.borderWidth = 1
 		mapView.layer.cornerRadius = Styles.Radius.radiusTextField
 		mapView.clipsToBounds = true
 		mapView.translatesAutoresizingMaskIntoConstraints = false
-		// viewForImage.layer.borderWidth = 1
-		// viewForImage.addSubview(imageMap)
-		// viewForImage.clipsToBounds = true
 
-		// imageMap.isUserInteractionEnabled = true
-		// imageMap.addGestureRecognizer(gesture)
+		buttonMyLocation.addTarget(self, action: #selector(myLocation), for: .touchUpInside)
+		buttonIncrease.addTarget(self, action: #selector(increaseMap), for: .touchUpInside)
+		buttonDecrease.addTarget(self, action: #selector(decreaseMap), for: .touchUpInside)
 
-		// buttonIncrease.layer.zPosition = viewForImage.layer.zPosition + 1
-
-		 buttonIncrease.addTarget(self, action: #selector(increaseMap), for: .touchUpInside)
-		 buttonDecrease.addTarget(self, action: #selector(decreaseMap), for: .touchUpInside)
-
-		// gesture.delegate = self
-		// gesture.addTarget(self, action: #selector(moveImage))
 	}
 }
 
@@ -125,16 +125,21 @@ private extension MainContactViewController {
 			collectionAddress.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
 			collectionAddress.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
 
+			labelDistance.topAnchor.constraint(equalTo: collectionAddress.bottomAnchor, constant: 10),
+			labelDistance.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+			labelDistance.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+			labelDistance.heightAnchor.constraint(equalToConstant: 40),
+
+			mapView.topAnchor.constraint(equalTo: labelDistance.bottomAnchor, constant: 10),
 			mapView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
 			mapView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-			mapView.topAnchor.constraint(equalTo: collectionAddress.bottomAnchor, constant: 10),
 			mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
-			/*
-			viewForImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			viewForImage.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-			viewForImage.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-			viewForImage.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-			 */
+
+			buttonMyLocation.rightAnchor.constraint(equalTo: mapView.rightAnchor, constant: -10),
+			buttonMyLocation.bottomAnchor.constraint(equalTo: buttonIncrease.topAnchor, constant: -25),
+			buttonMyLocation.heightAnchor.constraint(equalToConstant: 40),
+			buttonMyLocation.widthAnchor.constraint(equalToConstant: 40),
+
 			buttonIncrease.rightAnchor.constraint(equalTo: mapView.rightAnchor, constant: -10),
 			buttonIncrease.centerYAnchor.constraint(equalTo: mapView.centerYAnchor, constant: -30),
 			buttonIncrease.heightAnchor.constraint(equalToConstant: 40),
@@ -176,6 +181,16 @@ extension MainContactViewController: UICollectionViewDataSource, UIColorPickerVi
 				longitude: currentLocation.flag.longitude
 			)
 		)
+		iterator?.fitchDistance(
+			currentCoordinate: CoordinateR(
+				latitude: modelCurrentLocation.latitude,
+				longitude: modelCurrentLocation.longitude
+			),
+			coordinate: CoordinateR(
+				latitude: modelForDisplayMap.latitude,
+				longitude: modelForDisplayMap.longitude
+			)
+		)
 		getMap()
 	}
 
@@ -193,10 +208,6 @@ extension MainContactViewController: UICollectionViewDataSource, UIColorPickerVi
 		)
 		if let currentCell = cell as? CellForContact {
 			currentCell.reloadData(title: address.title, address: address.address)
-			currentCell.layer.borderWidth = 1
-			currentCell.layer.borderColor = Theme.mainColor.cgColor
-			currentCell.layer.cornerRadius = Styles.Radius.radiusTextField
-			currentCell.clipsToBounds = true
 			return currentCell
 		}
 		return UICollectionViewCell()
@@ -271,31 +282,14 @@ private extension MainContactViewController {
 		getMap()
 	}
 
+	@objc func myLocation() {
+
+	}
+
 	func getMap() {
 		mapView.reload(coordinate: modelForDisplayMap)
 	}
 }
-
-// MARK: - Gesture.
-/*
-extension MainContactViewController: UIGestureRecognizerDelegate {
-	@objc func moveImage(gesture: UIPanGestureRecognizer) {
-		if gesture.state == UIGestureRecognizer.State.began || gesture.state == UIGestureRecognizer.State.changed {
-			let transform = imageMap.transform
-			imageMap.transform = CGAffineTransform.identity
-
-			let point: CGPoint = gesture.translation(in: imageMap)
-			let movePoint = CGPoint(
-				x: imageMap.center.x + point.x,
-				y: imageMap.center.y + point.y
-			)
-			imageMap.center = movePoint
-			imageMap.transform = transform
-			gesture.setTranslation(CGPoint.zero, in: imageMap)
-		}
-	}
-}
- */
 
 // MARK: - Render logic.
 extension MainContactViewController: IMainContactViewLogic {
@@ -316,6 +310,21 @@ extension MainContactViewController: IMainContactViewLogic {
 		getMap()
 	}
 
-	func renderMap(renderMap: Data) {
+	func renderCurrentLocation(renderCurrentLocation: MainContactModel.ViewModel.Coordinates) {
+		modelCurrentLocation = renderCurrentLocation
+		iterator?.fitchDistance(
+			currentCoordinate: CoordinateR(
+				latitude: modelCurrentLocation.latitude,
+				longitude: modelCurrentLocation.longitude
+			),
+			coordinate: CoordinateR(
+				latitude: modelForDisplayMap.latitude,
+				longitude: modelForDisplayMap.longitude
+			)
+		)
+	}
+
+	func renderDistance(renderDistance: Double) {
+		labelDistance.text = "Расстояние до текущего центра - \(renderDistance) км"
 	}
 }

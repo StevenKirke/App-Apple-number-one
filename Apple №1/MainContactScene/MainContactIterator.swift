@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import CoreLocation
+
+typealias CoordinateR = MainContactModel.Request.FlagCoordinates
 
 protocol IMainContactIterator: AnyObject {
 	func fitchAddresses()
 	func fitchCurrentLocation()
-	func fitchMap(coordinate: MainContactModel.Request.Coordinates)
+	func fitchDistance(currentCoordinate: CoordinateR, coordinate: CoordinateR)
 }
 
 final class MainContactIterator {
@@ -42,21 +45,34 @@ extension MainContactIterator: IMainContactIterator {
 		}
 	}
 
-	func fitchMap(coordinate: MainContactModel.Request.Coordinates) {
-		worker.getMapForLocation(coordinate: coordinate) { [weak self] resultData in
-			guard let self = self else { return }
-			switch resultData {
-			case .success(let data):
-				self.presenter.presentMap(presentMap: .showMap(data))
-			case .failure(let error):
-				self.presenter.presentMap(presentMap: .failure(error))
+	func fitchCurrentLocation() {
+		Task.init {
+			await self.worker.getCurrentLocation { [weak self] resultLocation in
+				guard let self = self else { return }
+				switch resultLocation {
+				case .success(let coordinate):
+					let model = MainContactModel.Response.showCurrentCoordinate(
+						MainContactModel.Response.Coordinates(
+							latitude: coordinate.latitude,
+							longitude: coordinate.longitude
+						)
+					)
+					self.presenter.presentCurrentLocation(presentCurrentLocation: model)
+				case .failure(let error):
+					self.presenter.presentCurrentLocation(presentCurrentLocation: .failure(error))
+				}
 			}
 		}
 	}
 
-	func fitchCurrentLocation() {
-		Task.init {
-			await self.worker.getCurrentLocation()
+	func fitchDistance(currentCoordinate: CoordinateR, coordinate: CoordinateR) {
+		DispatchQueue.main.async {
+			print("Coordinate - currentCoordinate: \(currentCoordinate) coordinate: \(coordinate)")
+			let currentLocation = CLLocation(latitude: currentCoordinate.latitude, longitude: currentCoordinate.longitude)
+			let workShopLocation = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+			let distance = workShopLocation.distance(from: currentLocation)
+			let distanceKM = (distance / 1000).rounded()
+			self.presenter.presentDistance(presentDistance: .showDistance(distanceKM))
 		}
 	}
 }

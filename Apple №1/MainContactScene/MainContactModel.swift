@@ -29,7 +29,7 @@ enum MainContactModel {
 	enum Response {
 		case showAddress([AddressWorkShop])
 		case showCurrentCoordinate(Coordinates)
-		case showMap(Data)
+		case showDistance(Double)
 		case failure(Error)
 
 		struct AddressWorkShop {

@@ -17,6 +17,7 @@ final class CellForContact: UICollectionViewCell {
 	private lazy var separator = createSeparator()
 	private lazy var labelAddress = createUILabel()
 	private lazy var labelAddressTitle = createUILabel()
+	private var isNearest: Bool = false
 
 	// MARK: - Initializator
 	override init(frame: CGRect) {
@@ -58,6 +59,10 @@ private extension CellForContact {
 	/// Настройка UI элементов
 	func setupConfiguration() {
 		contentView.backgroundColor = Colors.grey
+		contentView.layer.borderWidth = 1
+		contentView.layer.borderColor = isNearest ? UIColor.green.cgColor : Theme.mainColor.cgColor
+		contentView.layer.cornerRadius = Styles.Radius.radiusTextField
+		contentView.clipsToBounds = true
 		labelTitle.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 		separator.backgroundColor = Theme.mainColor
 

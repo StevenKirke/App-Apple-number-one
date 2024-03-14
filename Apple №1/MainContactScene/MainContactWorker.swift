@@ -8,8 +8,13 @@
 import Foundation
 
 protocol IMainContactWorker: AnyObject {
+	/// Получение списка адресов мастерских.
 	func getAddressList(resultAddress: @escaping (Result<[MainContactModel.Response.AddressWorkShop], Error>) -> Void)
-	func getCurrentLocation() async
+	/// Получение текущей геолокации.
+	func getCurrentLocation(
+		resultLocation: @escaping (Result<MainContactModel.Response.Coordinates,Error>) -> Void
+	) async
+	/// Получение карты локации по координатам.
 	func getMapForLocation(
 		coordinate: MainContactModel.Request.Coordinates, resultMap: @escaping (Result<Data, Error>
 		) -> Void)
@@ -43,13 +48,19 @@ final class MainContactWorker: IMainContactWorker {
 		resultAddress(.success(convertModel))
 	}
 
-	func getCurrentLocation() async {
+	func getCurrentLocation(
+		resultLocation: @escaping (Result<MainContactModel.Response.Coordinates, Error>) -> Void
+	) async {
 		await locationManager.getLocation { resultCurrentCoordinate in
 			switch resultCurrentCoordinate {
 			case .success(let coordinate):
-				print("coordinate \(coordinate)")
+				let model = MainContactModel.Response.Coordinates(
+					latitude: coordinate.latitude,
+					longitude: coordinate.longitude
+				)
+				resultLocation(.success(model))
 			case .failure(let error):
-				print("Error \(error)")
+				resultLocation(.failure(error))
 			}
 		}
 	}
